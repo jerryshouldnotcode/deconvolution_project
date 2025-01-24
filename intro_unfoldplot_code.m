@@ -11,17 +11,11 @@ cfgDesign = [];
 cfgDesign.eventtypes = {'1312','1311'};
 
 % intercept only  
-cfgDesign.formula = {'y ~ 1 + cat(label)+ cat(type)'}; % at every timepoint? 
-
-% debugging
-disp(unique({EEG.event.type}))
-% disp(unique([EEG.event.fixationNumber]));
-% disp(class([EEG.event.fixationNumber]))
-
+cfgDesign.formula = {'y ~ 1 + cat(type) + cat(fix_type) + duration'}; % at every timepoint? 
 
 % setting events to be observed for the categorical variables
-cfgDesign.categorical = {'type', {'1312', '1311'};
-                        'label', {'FirstFixation', 'Refixation'}}; 
+cfgDesign.categorical = {'type', {'1312', '1311'}...
+                        'fix_type', {'single', 'first_refix', 'second_refix'}}; 
 
 % initializes sparse matrix with the events and variables stated
 EEG = uf_designmat(EEG,cfgDesign);
