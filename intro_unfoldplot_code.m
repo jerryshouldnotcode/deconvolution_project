@@ -10,11 +10,12 @@ cfgDesign = [];
 % defining event types for low and high constraint 
 cfgDesign.eventtypes = {'1312','1311'};
 
-% intercept only  
-cfgDesign.formula = {'y ~ 1 + cat(type) + cat(fix_type) + duration'}; % at every timepoint? 
+% explicit formula: y = 1 + type + fix_type + type:fix_type {interaction effect}
 
-% setting events to be observed for the categorical variables
-cfgDesign.categorical = {'type', {'1312', '1311'}...
+cfgDesign.formula = {'y ~ 1 + cat(type)*cat(fix_type)'}; 
+
+% Make sure both types are explicitly included
+cfgDesign.categorical = {'type', {'1311', '1312'},...
                         'fix_type', {'single', 'first_refix', 'second_refix'}}; 
 
 % initializes sparse matrix with the events and variables stated
@@ -46,17 +47,23 @@ ufresult= uf_condense(EEG_epoch);
 % debugging
 display(ufresult)
 
-% plots all parameters; general plot
-uf_plotParam(ufresult,'channel',16);
+% Debug: Print the structure of ufresult to see what's available
+disp('Structure of ufresult:')
+disp(ufresult)
 
-% plot conditions on top of each other, reverse y-axis direction
-
-% First plot: Deconvoluted betas (Blue)
-g1 = uf_plotParam(ufresult, 'channel', 16, 'deconv', 1, 'baseline' , [ufresult.times(1) 0]);
+% Plot with more explicit parameters
+g1 = uf_plotParam(ufresult, 'channel', 16, ...
+    'deconv', 1, ...
+    'baseline', [ufresult.times(1) 0], ...
+    'plotSeparate', 'event');
 g1.set_color_options('map', [0 0 1]); % RGB for blue
-g1.update(); 
+g1.update();
 
-% Second plot: Non-deconvoluted betas (Red)
-% g2 = uf_plotParam(ufresult, 'channel', 16, 'deconv', 0, 'baseline', [ufresult.times(1) 0], 'gramm', g1);
+% Optional: Add second plot for non-deconvoluted betas
+% g2 = uf_plotParam(ufresult, 'channel', 16, ...
+%     'deconv', 0, ...
+%     'baseline', [ufresult.times(1) 0], ...
+%     'plotParam', {'type_1311', 'type_1312'}, ... % Explicitly specify both types
+%     'gramm', g1);
 % g2.set_color_options('map', [1 0 0]); % RGB for red
 % g2.update();
