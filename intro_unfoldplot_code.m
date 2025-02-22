@@ -9,6 +9,12 @@ numDatasets = length(datasetFiles);
 allResults = struct();
 allResults.datasetNames = strings(1, numDatasets);
 
+% create output folder for csv files
+output_folder = './output_dc_csv';
+if ~exist(output_folder, 'dir')
+    mkdir(output_folder);
+end
+
 for i = 1: numDatasets
     EEG = pop_loadset('filename', datasetFiles(i).name, 'filepath', datasetFolder);
     EEG = eeg_checkset(EEG);
@@ -60,8 +66,12 @@ for i = 1: numDatasets
     allResults.param{i} = ufresult.param;     % Model parameters
     allResults.unfold{i} = ufresult.unfold;   % Extra Unfold data (if needed)
 
-    % debugging
-    % display(ufresult)
+    % Export to CSV with dataset identifier
+    [~, baseFileName, ~] = fileparts(datasetFiles(i).name);  % Extract filename without extension
+    filename = sprintf('%s_unfold.csv', baseFileName);
+    fullpath = fullfile(output_folder, filename);  % Create full path including output folder
+    uftable = uf_unfold2csv(ufresult, 'filename', fullpath);
+    
     
     % Debug: Print the structure of ufresult to see what's available
     disp('Structure of ufresult:')
