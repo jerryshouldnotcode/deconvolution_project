@@ -1,6 +1,6 @@
 init_unfold
 
-projectFolder = 'C:\Users\HP\Documents\MATLAB\projects\fixation-label for deconvolution\output_deconvolution';
+projectFolder = '\fixation-label for deconvolution\output_deconvolution';
 
 % Load the data
 filename = 'all_betas.mat';  % Replace with your actual .mat filename
